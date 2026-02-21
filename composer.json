@@ -2,7 +2,6 @@
     "name": "symkit/sitemap-bundle",
     "description": "A modern, high-performance Symfony bundle for XML sitemap generation",
     "type": "symfony-bundle",
-    "version": "0.0.1",
     "authors": [
         {
             "name": "Symkit",
