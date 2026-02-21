@@ -39,7 +39,7 @@
         "infection/infection": "^0.29",
         "infection/extension-installer": "^0.1",
         "phpro/grumphp": "^2.0",
-        "qossmic/deptrac": "^2.0",
+        "deptrac/deptrac": "^2.0",
         "symfony/cache": "^7.0 || ^8.0",
         "symfony/framework-bundle": "^7.0 || ^8.0",
         "symkit/bundle-ai-kit": "^0.0.3"
