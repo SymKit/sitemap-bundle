@@ -1,0 +1,86 @@
+deptrac:
+    paths:
+        - ./src
+    layers:
+        - name: Contract
+          collectors:
+            - type: directory
+              value: src/Contract/.*
+        - name: Model
+          collectors:
+            - type: directory
+              value: src/Model/.*
+        - name: Event
+          collectors:
+            - type: directory
+              value: src/Event/.*
+        - name: Exception
+          collectors:
+            - type: directory
+              value: src/Exception/.*
+        - name: Cache
+          collectors:
+            - type: directory
+              value: src/Cache/.*
+        - name: Registry
+          collectors:
+            - type: directory
+              value: src/Registry/.*
+        - name: Generator
+          collectors:
+            - type: directory
+              value: src/Generator/.*
+        - name: Priority
+          collectors:
+            - type: directory
+              value: src/Priority/.*
+        - name: Provider
+          collectors:
+            - type: directory
+              value: src/Provider/.*
+        - name: EventListener
+          collectors:
+            - type: directory
+              value: src/EventListener/.*
+        - name: Controller
+          collectors:
+            - type: directory
+              value: src/Controller/.*
+        - name: Bundle
+          collectors:
+            - type: className
+              value: Symkit\\SitemapBundle\\SitemapBundle
+    ruleset:
+        Contract:
+            - Model
+        Model: []
+        Event: []
+        Exception: []
+        Cache:
+            - Contract
+        Registry:
+            - Contract
+            - Exception
+        Generator:
+            - Contract
+            - Exception
+            - Model
+        Priority:
+            - Contract
+        Provider:
+            - Contract
+        EventListener:
+            - Contract
+            - Event
+        Controller:
+            - Contract
+            - Exception
+        Bundle:
+            - Contract
+            - Cache
+            - Controller
+            - EventListener
+            - Generator
+            - Priority
+            - Provider
+            - Registry
