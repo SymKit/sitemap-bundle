@@ -12,8 +12,19 @@ A modern, high-performance Symfony bundle for XML sitemap generation.
 - **Automatic Chunking**: Splits large sitemaps (default > 25,000 URLs) into paginated files.
 - **Pretty URLs**: Clean URL structures like `/sitemap/pages-1.xml`.
 - **Image Support**: Built-in support for Google Image Sitemaps.
+- **Video Support**: Built-in support for Google Video Sitemaps.
+- **News Support**: Built-in support for Google News Sitemaps.
+- **Multi-language (hreflang)**: `xhtml:link` alternates for multi-language sites.
+- **Gzip Compression**: Optional gzip compression for sitemap responses.
 - **Taggable Cache**: Optimized caching with tag-based invalidation.
-- **SOLID Architecture**: Contract-based interfaces, `final readonly` services, event-driven cache invalidation.
+- **Cache Warmup**: Automatic cache warming via `cache:warmup` or CLI command.
+- **Console Commands**: `sitemap:generate` (warmup) and `sitemap:debug` (inspect loaders).
+- **Profiler**: Symfony Web Debug Toolbar integration with loader stats and generation timing.
+- **Async Generation**: Optional Messenger-based async sitemap regeneration (disabled by default).
+- **IndexNow**: Automatic search engine notification on sitemap invalidation.
+- **robots.txt**: Customizable `robots.txt` serving and automatic `Sitemap:` directive injection.
+- **Logging**: PSR Logger integration on the `sitemap` monolog channel.
+- **SOLID Architecture**: Contract-based interfaces, `final readonly` services, event-driven.
 
 ## Installation
 
@@ -45,20 +56,41 @@ This registers three routes:
 # config/packages/symkit_sitemap.yaml
 symkit_sitemap:
     items_per_page: 25000
+    gzip: false
+    robots_txt:
+        enabled: false
+        content: ~            # Full robots.txt content (serves /robots.txt when set)
+        inject_sitemap: true  # Auto-append Sitemap: directive
     cache:
         enabled: false
         pool: 'cache.app.taggable'
         tag: 'sitemap'
         ttl: 3600
+    messenger:
+        enabled: false
+        transport: 'async'
+    index_now:
+        enabled: false
+        api_key: ~ # Your IndexNow API key
+        host: ~    # Optional: your site hostname
 ```
 
 | Parameter | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `items_per_page` | `integer` | `25000` | Maximum URLs per sitemap chunk |
+| `gzip` | `boolean` | `false` | Enable gzip compression for sitemap responses |
+| `robots_txt.enabled` | `boolean` | `false` | Enable the robots.txt feature |
+| `robots_txt.content` | `string` | `null` | Full robots.txt content — when set, the bundle serves `/robots.txt` with this content |
+| `robots_txt.inject_sitemap` | `boolean` | `true` | Auto-append `Sitemap:` directive to robots.txt responses |
 | `cache.enabled` | `boolean` | `false` | Enable caching for generated sitemaps |
 | `cache.pool` | `string` | `cache.app.taggable` | Symfony cache pool (must support tagging) |
 | `cache.tag` | `string` | `sitemap` | Cache tag for sitemap entries |
 | `cache.ttl` | `integer` | `3600` | Cache TTL in seconds |
+| `messenger.enabled` | `boolean` | `false` | Enable async sitemap generation via Messenger |
+| `messenger.transport` | `string` | `async` | Messenger transport name |
+| `index_now.enabled` | `boolean` | `false` | Enable IndexNow notifications on invalidation |
+| `index_now.api_key` | `string` | `null` | IndexNow API key |
+| `index_now.host` | `string` | `null` | Site hostname for IndexNow |
 
 ## Usage
 
@@ -104,7 +136,60 @@ final readonly class ProductSitemapLoader implements SitemapLoaderInterface
 }
 ```
 
-### 2. Cache Invalidation
+### 2. Multi-language (hreflang)
+
+```php
+use Symkit\SitemapBundle\Model\SitemapAlternate;
+use Symkit\SitemapBundle\Model\SitemapUrl;
+
+yield new SitemapUrl(
+    loc: 'https://example.com/en/page',
+    alternates: [
+        new SitemapAlternate('fr', 'https://example.com/fr/page'),
+        new SitemapAlternate('de', 'https://example.com/de/page'),
+        new SitemapAlternate('x-default', 'https://example.com/en/page'),
+    ],
+);
+```
+
+### 3. Video Sitemaps
+
+```php
+use Symkit\SitemapBundle\Model\SitemapUrl;
+use Symkit\SitemapBundle\Model\SitemapVideo;
+
+yield new SitemapUrl(
+    loc: 'https://example.com/videos/my-video',
+    videos: [
+        new SitemapVideo(
+            thumbnailLoc: 'https://example.com/thumbs/my-video.jpg',
+            title: 'My Video Title',
+            description: 'A description of the video.',
+            contentLoc: 'https://example.com/videos/my-video.mp4',
+            duration: '600',
+        ),
+    ],
+);
+```
+
+### 4. News Sitemaps
+
+```php
+use Symkit\SitemapBundle\Model\SitemapNews;
+use Symkit\SitemapBundle\Model\SitemapUrl;
+
+yield new SitemapUrl(
+    loc: 'https://example.com/news/breaking-story',
+    news: new SitemapNews(
+        publicationName: 'Example Times',
+        publicationLanguage: 'en',
+        title: 'Breaking Story Title',
+        publicationDate: new \DateTimeImmutable(),
+    ),
+);
+```
+
+### 5. Cache Invalidation
 
 Dispatch `SitemapInvalidateEvent` or call `SitemapCacheManagerInterface::invalidate()`:
 
@@ -125,7 +210,7 @@ final readonly class ProductEventSubscriber
 }
 ```
 
-### 3. Custom Loader Name
+### 6. Custom Loader Name
 
 By default, the sitemap name is the `snake_case` version of your loader class name. Override it with the tag `index` attribute:
 
@@ -135,6 +220,33 @@ services:
         tags:
             - { name: 'symkit_sitemap.loader', index: 'products' }
 ```
+
+## Console Commands
+
+### `sitemap:generate`
+
+Generate and warm up all sitemap caches:
+
+```bash
+php bin/console sitemap:generate
+php bin/console sitemap:generate --name=products
+```
+
+### `sitemap:debug`
+
+Display registered loaders with URL counts and page numbers:
+
+```bash
+php bin/console sitemap:debug
+```
+
+## Events
+
+| Event | When |
+| :--- | :--- |
+| `SitemapPreGenerateEvent` | Before sitemap XML generation |
+| `SitemapPostGenerateEvent` | After sitemap XML generation (contains XML) |
+| `SitemapInvalidateEvent` | When cache invalidation is triggered |
 
 ## Contributing
 

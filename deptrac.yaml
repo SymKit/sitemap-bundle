@@ -46,10 +46,30 @@ deptrac:
           collectors:
             - type: directory
               value: src/Controller/.*
+        - name: Command
+          collectors:
+            - type: directory
+              value: src/Command/.*
+        - name: DataCollector
+          collectors:
+            - type: directory
+              value: src/DataCollector/.*
+        - name: Message
+          collectors:
+            - type: directory
+              value: src/Message/.*
+        - name: MessageHandler
+          collectors:
+            - type: directory
+              value: src/MessageHandler/.*
+        - name: Notifier
+          collectors:
+            - type: directory
+              value: src/Notifier/.*
         - name: Bundle
           collectors:
-            - type: className
-              value: Symkit\\SitemapBundle\\SitemapBundle
+            - type: classNameRegex
+              value: '/^Symkit\\\\SitemapBundle\\\\SitemapBundle$/'
     ruleset:
         Contract:
             - Model
@@ -65,6 +85,7 @@ deptrac:
             - Contract
             - Exception
             - Model
+            - Event
         Priority:
             - Contract
         Provider:
@@ -75,12 +96,29 @@ deptrac:
         Controller:
             - Contract
             - Exception
+        Command:
+            - Contract
+        DataCollector:
+            - Contract
+            - Event
+        Message: []
+        MessageHandler:
+            - Contract
+            - Message
+        Notifier:
+            - Contract
         Bundle:
             - Contract
             - Cache
+            - Command
             - Controller
+            - DataCollector
             - EventListener
             - Generator
+            - MessageHandler
+            - Notifier
             - Priority
             - Provider
             - Registry
+            - Event
+            - Message

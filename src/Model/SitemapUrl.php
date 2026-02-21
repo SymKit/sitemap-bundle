@@ -10,6 +10,8 @@ final readonly class SitemapUrl
 {
     /**
      * @param list<array<string, string>> $images
+     * @param list<SitemapAlternate>      $alternates
+     * @param list<SitemapVideo>          $videos
      */
     public function __construct(
         public string $loc,
@@ -17,6 +19,9 @@ final readonly class SitemapUrl
         public ?string $changefreq = null,
         public ?string $priority = null,
         public array $images = [],
+        public array $alternates = [],
+        public array $videos = [],
+        public ?SitemapNews $news = null,
     ) {
     }
 }

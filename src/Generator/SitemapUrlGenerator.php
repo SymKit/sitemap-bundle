@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Symkit\SitemapBundle\Generator;
 
-use DateTimeInterface;
-use Rumenx\Sitemap\Sitemap;
-use Symkit\SitemapBundle\Exception\SitemapNotFoundException;
 use Symkit\SitemapBundle\Contract\SitemapRegistryInterface;
+use Symkit\SitemapBundle\Exception\SitemapNotFoundException;
 
 final readonly class SitemapUrlGenerator
 {
@@ -27,20 +25,10 @@ final readonly class SitemapUrlGenerator
             throw SitemapNotFoundException::forName(\sprintf('%s (page %d)', $name, $page));
         }
 
-        $sitemap = new Sitemap();
         $limit = $this->itemsPerPage;
         $offset = ($page - 1) * $limit;
+        $builder = new SitemapXmlBuilder();
 
-        foreach ($loader->load($limit, $offset) as $url) {
-            $sitemap->add(
-                $url->loc,
-                $url->lastmod?->format(DateTimeInterface::ATOM),
-                $url->priority,
-                $url->changefreq,
-                $url->images,
-            );
-        }
-
-        return $sitemap->generate('xml');
+        return $builder->buildUrlSet($loader->load($limit, $offset));
     }
 }

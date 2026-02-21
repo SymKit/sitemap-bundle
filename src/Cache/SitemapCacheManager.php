@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Symkit\SitemapBundle\Cache;
 
 use Closure;
-use Symkit\SitemapBundle\Contract\SitemapCacheManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
+use Symkit\SitemapBundle\Contract\SitemapCacheManagerInterface;
 
 final readonly class SitemapCacheManager implements SitemapCacheManagerInterface
 {
@@ -16,6 +17,7 @@ final readonly class SitemapCacheManager implements SitemapCacheManagerInterface
         private bool $enabled = true,
         private string $tag = 'sitemap',
         private int $ttl = 3600,
+        private ?LoggerInterface $logger = null,
     ) {
     }
 
@@ -25,9 +27,13 @@ final readonly class SitemapCacheManager implements SitemapCacheManagerInterface
             return $callback();
         }
 
-        return $this->cache->get($this->getCacheKey($name, $page), function (ItemInterface $item) use ($callback) {
+        $key = $this->getCacheKey($name, $page);
+
+        return $this->cache->get($key, function (ItemInterface $item) use ($callback, $key) {
             $item->tag([$this->tag]);
             $item->expiresAfter($this->ttl);
+
+            $this->logger?->debug('Sitemap cache miss.', ['key' => $key]);
 
             return $callback();
         });
@@ -40,6 +46,7 @@ final readonly class SitemapCacheManager implements SitemapCacheManagerInterface
         }
 
         $this->cache->invalidateTags([$this->tag]);
+        $this->logger?->info('Sitemap cache invalidated.', ['tag' => $this->tag]);
     }
 
     private function getCacheKey(?string $name, int $page): string

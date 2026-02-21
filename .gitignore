@@ -5,3 +5,4 @@
 /infection.log
 /infection-summary.log
 /.phpunit.result.cache
+/.deptrac.cache

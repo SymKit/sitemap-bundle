@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Symkit\SitemapBundle\Registry;
 
 use ReflectionClass;
+
+use function Symfony\Component\String\u;
+
 use Symkit\SitemapBundle\Contract\SitemapLoaderInterface;
 use Symkit\SitemapBundle\Contract\SitemapRegistryInterface;
 use Symkit\SitemapBundle\Exception\SitemapNotFoundException;
-
-use function Symfony\Component\String\u;
 
 final readonly class SitemapRegistry implements SitemapRegistryInterface
 {

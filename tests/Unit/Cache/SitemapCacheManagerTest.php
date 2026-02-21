@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Symkit\SitemapBundle\Tests\Unit\Cache;
 
 use PHPUnit\Framework\TestCase;
-use Symkit\SitemapBundle\Cache\SitemapCacheManager;
-use Symfony\Contracts\Cache\ItemInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
+use Symkit\SitemapBundle\Cache\SitemapCacheManager;
 
 final class SitemapCacheManagerTest extends TestCase
 {
@@ -108,5 +108,19 @@ final class SitemapCacheManagerTest extends TestCase
 
         $manager = new SitemapCacheManager($cache, true, 'sitemap', 3600);
         $manager->get('pages', 3, fn () => '');
+    }
+
+    public function testInvalidateLogsWhenLoggerPresent(): void
+    {
+        $cache = $this->createMock(TagAwareCacheInterface::class);
+        $cache->method('invalidateTags');
+
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects(self::once())
+            ->method('info')
+            ->with('Sitemap cache invalidated.', ['tag' => 'sitemap']);
+
+        $manager = new SitemapCacheManager($cache, true, 'sitemap', 3600, $logger);
+        $manager->invalidate();
     }
 }

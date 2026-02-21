@@ -1,0 +1,105 @@
+{% extends '@WebProfiler/Profiler/layout.html.twig' %}
+
+{% block toolbar %}
+    {% set icon %}
+        {{ include('@WebProfiler/Icon/redirect.svg') }}
+        <span class="sf-toolbar-value">{{ collector.totalUrls }}</span>
+        <span class="sf-toolbar-label">sitemap URLs</span>
+    {% endset %}
+
+    {% set text %}
+        <div class="sf-toolbar-info-piece">
+            <b>Loaders</b>
+            <span>{{ collector.loaders|length }}</span>
+        </div>
+        <div class="sf-toolbar-info-piece">
+            <b>Total URLs</b>
+            <span>{{ collector.totalUrls }}</span>
+        </div>
+        <div class="sf-toolbar-info-piece">
+            <b>Cache</b>
+            <span>{{ collector.cacheEnabled ? 'Enabled' : 'Disabled' }}</span>
+        </div>
+    {% endset %}
+
+    {{ include('@WebProfiler/Profiler/toolbar_item.html.twig', { link: profiler_url }) }}
+{% endblock %}
+
+{% block menu %}
+    <span class="label">
+        <span class="icon">{{ include('@WebProfiler/Icon/redirect.svg') }}</span>
+        <strong>Sitemap</strong>
+        <span class="count">
+            <span>{{ collector.totalUrls }}</span>
+        </span>
+    </span>
+{% endblock %}
+
+{% block panel %}
+    <h2>Sitemap</h2>
+
+    <div class="metrics">
+        <div class="metric">
+            <span class="value">{{ collector.loaders|length }}</span>
+            <span class="label">Loaders</span>
+        </div>
+        <div class="metric">
+            <span class="value">{{ collector.totalUrls }}</span>
+            <span class="label">Total URLs</span>
+        </div>
+        <div class="metric">
+            <span class="value">{{ collector.cacheEnabled ? 'Yes' : 'No' }}</span>
+            <span class="label">Cache enabled</span>
+        </div>
+    </div>
+
+    <h3>Registered Loaders</h3>
+    {% if collector.loaders|length %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Class</th>
+                    <th>URL Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for name, loader in collector.loaders %}
+                    <tr>
+                        <td>{{ name }}</td>
+                        <td><code>{{ loader.class }}</code></td>
+                        <td>{{ loader.count }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="empty">
+            <p>No sitemap loaders registered.</p>
+        </div>
+    {% endif %}
+
+    {% if collector.generations|length %}
+        <h3>Generations (this request)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Page</th>
+                    <th>Duration</th>
+                    <th>Size</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for gen in collector.generations %}
+                    <tr>
+                        <td>{{ gen.name ?? 'index' }}</td>
+                        <td>{{ gen.page }}</td>
+                        <td>{{ '%0.2f'|format(gen.duration * 1000) }} ms</td>
+                        <td>{{ '%0.1f'|format(gen.size / 1024) }} KB</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}

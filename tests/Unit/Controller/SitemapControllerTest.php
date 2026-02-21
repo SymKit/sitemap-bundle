@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Symkit\SitemapBundle\Tests\Unit\Controller;
 
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symkit\SitemapBundle\Contract\SitemapProviderInterface;
 use Symkit\SitemapBundle\Controller\SitemapController;
 use Symkit\SitemapBundle\Exception\SitemapNotFoundException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final class SitemapControllerTest extends TestCase
 {
@@ -21,7 +22,7 @@ final class SitemapControllerTest extends TestCase
             ->willReturn('<urlset/>');
 
         $controller = new SitemapController($provider);
-        $response = $controller('pages', 1);
+        $response = $controller(Request::create('/sitemap/pages.xml'), 'pages', 1);
 
         self::assertSame(200, $response->getStatusCode());
         self::assertSame('application/xml', $response->headers->get('Content-Type'));
@@ -37,7 +38,7 @@ final class SitemapControllerTest extends TestCase
             ->willReturn('<sitemapindex/>');
 
         $controller = new SitemapController($provider);
-        $response = $controller();
+        $response = $controller(Request::create('/sitemap.xml'));
 
         self::assertSame('<sitemapindex/>', $response->getContent());
     }
@@ -52,6 +53,53 @@ final class SitemapControllerTest extends TestCase
         $controller = new SitemapController($provider);
 
         $this->expectException(NotFoundHttpException::class);
-        $controller('unknown');
+        $controller(Request::create('/sitemap/unknown.xml'), 'unknown');
+    }
+
+    public function testInvokeCompressesWhenGzipEnabled(): void
+    {
+        $provider = $this->createMock(SitemapProviderInterface::class);
+        $provider->method('provide')->willReturn('<urlset/>');
+
+        $controller = new SitemapController($provider, gzip: true);
+
+        $request = Request::create('/sitemap.xml');
+        $request->headers->set('Accept-Encoding', 'gzip, deflate');
+
+        $response = $controller($request);
+
+        self::assertSame('gzip', $response->headers->get('Content-Encoding'));
+        self::assertSame(gzencode('<urlset/>'), $response->getContent());
+    }
+
+    public function testInvokeDoesNotCompressWhenClientDoesNotAcceptGzip(): void
+    {
+        $provider = $this->createMock(SitemapProviderInterface::class);
+        $provider->method('provide')->willReturn('<urlset/>');
+
+        $controller = new SitemapController($provider, gzip: true);
+
+        $request = Request::create('/sitemap.xml');
+        $request->headers->set('Accept-Encoding', 'deflate');
+
+        $response = $controller($request);
+
+        self::assertNull($response->headers->get('Content-Encoding'));
+        self::assertSame('<urlset/>', $response->getContent());
+    }
+
+    public function testInvokeDoesNotCompressWhenGzipDisabled(): void
+    {
+        $provider = $this->createMock(SitemapProviderInterface::class);
+        $provider->method('provide')->willReturn('<urlset/>');
+
+        $controller = new SitemapController($provider, gzip: false);
+
+        $request = Request::create('/sitemap.xml');
+        $request->headers->set('Accept-Encoding', 'gzip');
+
+        $response = $controller($request);
+
+        self::assertNull($response->headers->get('Content-Encoding'));
     }
 }

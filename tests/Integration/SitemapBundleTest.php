@@ -5,18 +5,26 @@ declare(strict_types=1);
 namespace Symkit\SitemapBundle\Tests\Integration;
 
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\Kernel;
+use Symkit\SitemapBundle\Command\SitemapDebugCommand;
+use Symkit\SitemapBundle\Command\SitemapGenerateCommand;
 use Symkit\SitemapBundle\Contract\SitemapCacheManagerInterface;
 use Symkit\SitemapBundle\Contract\SitemapGeneratorInterface;
 use Symkit\SitemapBundle\Contract\SitemapProviderInterface;
 use Symkit\SitemapBundle\Contract\SitemapRegistryInterface;
 use Symkit\SitemapBundle\Controller\SitemapController;
 use Symkit\SitemapBundle\SitemapBundle;
-use Symfony\Component\Config\Loader\LoaderInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\Kernel;
 
 final class SitemapBundleTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        restore_exception_handler();
+    }
+
     public function testBundleBootsWithDefaultConfig(): void
     {
         $kernel = new TestKernel('test', true);
@@ -31,6 +39,8 @@ final class SitemapBundleTest extends TestCase
         self::assertTrue($testContainer->has(SitemapGeneratorInterface::class));
         self::assertTrue($testContainer->has(SitemapCacheManagerInterface::class));
         self::assertTrue($testContainer->has(SitemapProviderInterface::class));
+        self::assertTrue($testContainer->has(SitemapGenerateCommand::class));
+        self::assertTrue($testContainer->has(SitemapDebugCommand::class));
 
         $kernel->shutdown();
     }
