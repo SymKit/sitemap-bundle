@@ -1,24 +1,25 @@
 {% extends '@WebProfiler/Profiler/layout.html.twig' %}
+{% trans_default_domain 'SymkitSitemapBundle' %}
 
 {% block toolbar %}
     {% set icon %}
         {{ include('@WebProfiler/Icon/redirect.svg') }}
         <span class="sf-toolbar-value">{{ collector.totalUrls }}</span>
-        <span class="sf-toolbar-label">sitemap URLs</span>
+        <span class="sf-toolbar-label">{% trans %}profiler.toolbar_label{% endtrans %}</span>
     {% endset %}
 
     {% set text %}
         <div class="sf-toolbar-info-piece">
-            <b>Loaders</b>
+            <b>{% trans %}profiler.loaders{% endtrans %}</b>
             <span>{{ collector.loaders|length }}</span>
         </div>
         <div class="sf-toolbar-info-piece">
-            <b>Total URLs</b>
+            <b>{% trans %}profiler.total_urls{% endtrans %}</b>
             <span>{{ collector.totalUrls }}</span>
         </div>
         <div class="sf-toolbar-info-piece">
-            <b>Cache</b>
-            <span>{{ collector.cacheEnabled ? 'Enabled' : 'Disabled' }}</span>
+            <b>{% trans %}profiler.cache{% endtrans %}</b>
+            <span>{{ collector.cacheEnabled ? 'profiler.cache_value_enabled'|trans : 'profiler.cache_value_disabled'|trans }}</span>
         </div>
     {% endset %}
 
@@ -28,7 +29,7 @@
 {% block menu %}
     <span class="label">
         <span class="icon">{{ include('@WebProfiler/Icon/redirect.svg') }}</span>
-        <strong>Sitemap</strong>
+        <strong>{% trans %}profiler.sitemap{% endtrans %}</strong>
         <span class="count">
             <span>{{ collector.totalUrls }}</span>
         </span>
@@ -36,31 +37,31 @@
 {% endblock %}
 
 {% block panel %}
-    <h2>Sitemap</h2>
+    <h2>{% trans %}profiler.sitemap{% endtrans %}</h2>
 
     <div class="metrics">
         <div class="metric">
             <span class="value">{{ collector.loaders|length }}</span>
-            <span class="label">Loaders</span>
+            <span class="label">{% trans %}profiler.loaders{% endtrans %}</span>
         </div>
         <div class="metric">
             <span class="value">{{ collector.totalUrls }}</span>
-            <span class="label">Total URLs</span>
+            <span class="label">{% trans %}profiler.total_urls{% endtrans %}</span>
         </div>
         <div class="metric">
-            <span class="value">{{ collector.cacheEnabled ? 'Yes' : 'No' }}</span>
-            <span class="label">Cache enabled</span>
+            <span class="value">{{ collector.cacheEnabled ? 'profiler.cache_yes'|trans : 'profiler.cache_no'|trans }}</span>
+            <span class="label">{% trans %}profiler.cache_enabled{% endtrans %}</span>
         </div>
     </div>
 
-    <h3>Registered Loaders</h3>
+    <h3>{% trans %}profiler.registered_loaders{% endtrans %}</h3>
     {% if collector.loaders|length %}
         <table>
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Class</th>
-                    <th>URL Count</th>
+                    <th>{% trans %}profiler.name{% endtrans %}</th>
+                    <th>{% trans %}profiler.class{% endtrans %}</th>
+                    <th>{% trans %}profiler.url_count{% endtrans %}</th>
                 </tr>
             </thead>
             <tbody>
@@ -75,19 +76,19 @@
         </table>
     {% else %}
         <div class="empty">
-            <p>No sitemap loaders registered.</p>
+            <p>{% trans %}profiler.no_loaders{% endtrans %}</p>
         </div>
     {% endif %}
 
     {% if collector.generations|length %}
-        <h3>Generations (this request)</h3>
+        <h3>{% trans %}profiler.generations_title{% endtrans %}</h3>
         <table>
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Page</th>
-                    <th>Duration</th>
-                    <th>Size</th>
+                    <th>{% trans %}profiler.name{% endtrans %}</th>
+                    <th>{% trans %}profiler.page{% endtrans %}</th>
+                    <th>{% trans %}profiler.duration{% endtrans %}</th>
+                    <th>{% trans %}profiler.size{% endtrans %}</th>
                 </tr>
             </thead>
             <tbody>

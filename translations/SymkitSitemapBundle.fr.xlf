@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="2.0" xmlns="urn:oasis:names:tc:xliff:document:2.0" srcLang="en" trgLang="fr">
+    <file id="SymkitSitemapBundle.fr.xlf">
+        <unit id="profiler.toolbar_label">
+            <segment>
+                <source>profiler.toolbar_label</source>
+                <target>URLs du sitemap</target>
+            </segment>
+        </unit>
+        <unit id="profiler.loaders">
+            <segment>
+                <source>profiler.loaders</source>
+                <target>Loaders</target>
+            </segment>
+        </unit>
+        <unit id="profiler.total_urls">
+            <segment>
+                <source>profiler.total_urls</source>
+                <target>Total URLs</target>
+            </segment>
+        </unit>
+        <unit id="profiler.cache">
+            <segment>
+                <source>profiler.cache</source>
+                <target>Cache</target>
+            </segment>
+        </unit>
+        <unit id="profiler.cache_enabled">
+            <segment>
+                <source>profiler.cache_enabled</source>
+                <target>Cache activé</target>
+            </segment>
+        </unit>
+        <unit id="profiler.cache_yes">
+            <segment>
+                <source>profiler.cache_yes</source>
+                <target>Oui</target>
+            </segment>
+        </unit>
+        <unit id="profiler.cache_no">
+            <segment>
+                <source>profiler.cache_no</source>
+                <target>Non</target>
+            </segment>
+        </unit>
+        <unit id="profiler.cache_value_enabled">
+            <segment>
+                <source>profiler.cache_value_enabled</source>
+                <target>Activé</target>
+            </segment>
+        </unit>
+        <unit id="profiler.cache_value_disabled">
+            <segment>
+                <source>profiler.cache_value_disabled</source>
+                <target>Désactivé</target>
+            </segment>
+        </unit>
+        <unit id="profiler.sitemap">
+            <segment>
+                <source>profiler.sitemap</source>
+                <target>Sitemap</target>
+            </segment>
+        </unit>
+        <unit id="profiler.registered_loaders">
+            <segment>
+                <source>profiler.registered_loaders</source>
+                <target>Loaders enregistrés</target>
+            </segment>
+        </unit>
+        <unit id="profiler.name">
+            <segment>
+                <source>profiler.name</source>
+                <target>Nom</target>
+            </segment>
+        </unit>
+        <unit id="profiler.class">
+            <segment>
+                <source>profiler.class</source>
+                <target>Classe</target>
+            </segment>
+        </unit>
+        <unit id="profiler.url_count">
+            <segment>
+                <source>profiler.url_count</source>
+                <target>Nombre d'URLs</target>
+            </segment>
+        </unit>
+        <unit id="profiler.no_loaders">
+            <segment>
+                <source>profiler.no_loaders</source>
+                <target>Aucun loader de sitemap enregistré.</target>
+            </segment>
+        </unit>
+        <unit id="profiler.generations_title">
+            <segment>
+                <source>profiler.generations_title</source>
+                <target>Générations (cette requête)</target>
+            </segment>
+        </unit>
+        <unit id="profiler.page">
+            <segment>
+                <source>profiler.page</source>
+                <target>Page</target>
+            </segment>
+        </unit>
+        <unit id="profiler.duration">
+            <segment>
+                <source>profiler.duration</source>
+                <target>Durée</target>
+            </segment>
+        </unit>
+        <unit id="profiler.size">
+            <segment>
+                <source>profiler.size</source>
+                <target>Taille</target>
+            </segment>
+        </unit>
+        <unit id="command.debug.title">
+            <segment>
+                <source>command.debug.title</source>
+                <target>Loaders du sitemap</target>
+            </segment>
+        </unit>
+        <unit id="command.debug.no_loaders">
+            <segment>
+                <source>command.debug.no_loaders</source>
+                <target>Aucun loader de sitemap enregistré.</target>
+            </segment>
+        </unit>
+        <unit id="command.debug.table_name">
+            <segment>
+                <source>command.debug.table_name</source>
+                <target>Nom</target>
+            </segment>
+        </unit>
+        <unit id="command.debug.table_class">
+            <segment>
+                <source>command.debug.table_class</source>
+                <target>Classe</target>
+            </segment>
+        </unit>
+        <unit id="command.debug.table_url_count">
+            <segment>
+                <source>command.debug.table_url_count</source>
+                <target>Nombre d'URLs</target>
+            </segment>
+        </unit>
+        <unit id="command.debug.table_pages">
+            <segment>
+                <source>command.debug.table_pages</source>
+                <target>Pages</target>
+            </segment>
+        </unit>
+        <unit id="command.generate.title">
+            <segment>
+                <source>command.generate.title</source>
+                <target>Génération des sitemaps</target>
+            </segment>
+        </unit>
+        <unit id="command.generate.option_name">
+            <segment>
+                <source>command.generate.option_name</source>
+                <target>Générer uniquement un loader de sitemap spécifique</target>
+            </segment>
+        </unit>
+        <unit id="command.generate.index_generated">
+            <segment>
+                <source>command.generate.index_generated</source>
+                <target>Index du sitemap généré</target>
+            </segment>
+        </unit>
+        <unit id="command.generate.page_generated">
+            <segment>
+                <source>command.generate.page_generated</source>
+                <target>  %name% généré (page %page%/%chunks%, %count% URLs)</target>
+            </segment>
+        </unit>
+        <unit id="command.generate.success">
+            <segment>
+                <source>command.generate.success</source>
+                <target>Tous les sitemaps ont été générés avec succès.</target>
+            </segment>
+        </unit>
+    </file>
+</xliff>

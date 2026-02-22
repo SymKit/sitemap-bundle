@@ -7,6 +7,7 @@ namespace Symkit\SitemapBundle\Tests\Unit\Command;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symkit\SitemapBundle\Command\SitemapGenerateCommand;
 use Symkit\SitemapBundle\Contract\SitemapLoaderInterface;
 use Symkit\SitemapBundle\Contract\SitemapProviderInterface;
@@ -14,6 +15,34 @@ use Symkit\SitemapBundle\Contract\SitemapRegistryInterface;
 
 final class SitemapGenerateCommandTest extends TestCase
 {
+    private function createTranslator(): TranslatorInterface
+    {
+        $translator = $this->createMock(TranslatorInterface::class);
+        $translator->method('trans')->willReturnCallback(
+            static function (string $id, array $parameters = [], ?string $domain = null, ?string $locale = null): string {
+                if ('command.generate.page_generated' === $id) {
+                    return \sprintf(
+                        '  Generated %s (page %d/%d, %d URLs)',
+                        $parameters['%name%'] ?? '',
+                        $parameters['%page%'] ?? 0,
+                        $parameters['%chunks%'] ?? 0,
+                        $parameters['%count%'] ?? 0,
+                    );
+                }
+
+                return match ($id) {
+                    'command.generate.title' => 'Generating sitemaps',
+                    'command.generate.option_name' => 'Generate only a specific sitemap loader',
+                    'command.generate.index_generated' => 'Generated sitemap index',
+                    'command.generate.success' => 'All sitemaps generated successfully.',
+                    default => $id,
+                };
+            },
+        );
+
+        return $translator;
+    }
+
     public function testExecuteGeneratesAllSitemaps(): void
     {
         $loader = $this->createMock(SitemapLoaderInterface::class);
@@ -32,7 +61,7 @@ final class SitemapGenerateCommandTest extends TestCase
                 return '<xml/>';
             });
 
-        $command = new SitemapGenerateCommand($registry, $provider, 25000);
+        $command = new SitemapGenerateCommand($registry, $provider, 25000, $this->createTranslator());
         $tester = new CommandTester($command);
         $tester->execute([]);
 
@@ -55,7 +84,7 @@ final class SitemapGenerateCommandTest extends TestCase
             ->method('provide')
             ->willReturn('<xml/>');
 
-        $command = new SitemapGenerateCommand($registry, $provider, 25000);
+        $command = new SitemapGenerateCommand($registry, $provider, 25000, $this->createTranslator());
         $tester = new CommandTester($command);
         $tester->execute([]);
 
@@ -82,7 +111,7 @@ final class SitemapGenerateCommandTest extends TestCase
                 return '<xml/>';
             });
 
-        $command = new SitemapGenerateCommand($registry, $provider, 25000);
+        $command = new SitemapGenerateCommand($registry, $provider, 25000, $this->createTranslator());
         $tester = new CommandTester($command);
         $tester->execute(['--name' => 'pages']);
 

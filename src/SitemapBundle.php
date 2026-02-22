@@ -45,7 +45,7 @@ class SitemapBundle extends AbstractBundle
 {
     public function getPath(): string
     {
-        return \dirname(__DIR__);
+        return \dirname(parent::getPath());
     }
 
     public function configure(DefinitionConfigurator $definition): void

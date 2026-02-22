@@ -9,6 +9,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symkit\SitemapBundle\Contract\SitemapRegistryInterface;
 
 #[AsCommand(
@@ -20,6 +21,7 @@ final class SitemapDebugCommand extends Command
     public function __construct(
         private readonly SitemapRegistryInterface $registry,
         private readonly int $itemsPerPage,
+        private readonly TranslatorInterface $translator,
     ) {
         parent::__construct();
     }
@@ -27,12 +29,12 @@ final class SitemapDebugCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $io->title('Sitemap Loaders');
+        $io->title($this->translator->trans('command.debug.title', [], 'SymkitSitemapBundle'));
 
         $loaders = $this->registry->getAllLoaders();
 
         if ([] === $loaders) {
-            $io->warning('No sitemap loaders registered.');
+            $io->warning($this->translator->trans('command.debug.no_loaders', [], 'SymkitSitemapBundle'));
 
             return Command::SUCCESS;
         }
@@ -45,7 +47,15 @@ final class SitemapDebugCommand extends Command
             $rows[] = [$name, $loader::class, $count, $pages];
         }
 
-        $io->table(['Name', 'Class', 'URL count', 'Pages'], $rows);
+        $io->table(
+            [
+                $this->translator->trans('command.debug.table_name', [], 'SymkitSitemapBundle'),
+                $this->translator->trans('command.debug.table_class', [], 'SymkitSitemapBundle'),
+                $this->translator->trans('command.debug.table_url_count', [], 'SymkitSitemapBundle'),
+                $this->translator->trans('command.debug.table_pages', [], 'SymkitSitemapBundle'),
+            ],
+            $rows,
+        );
 
         return Command::SUCCESS;
     }

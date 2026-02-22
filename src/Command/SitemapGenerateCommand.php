@@ -10,6 +10,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symkit\SitemapBundle\Contract\SitemapProviderInterface;
 use Symkit\SitemapBundle\Contract\SitemapRegistryInterface;
 
@@ -23,25 +24,31 @@ final class SitemapGenerateCommand extends Command
         private readonly SitemapRegistryInterface $registry,
         private readonly SitemapProviderInterface $provider,
         private readonly int $itemsPerPage,
+        private readonly TranslatorInterface $translator,
     ) {
         parent::__construct();
     }
 
     protected function configure(): void
     {
-        $this->addOption('name', null, InputOption::VALUE_REQUIRED, 'Generate only a specific sitemap loader');
+        $this->addOption(
+            'name',
+            null,
+            InputOption::VALUE_REQUIRED,
+            $this->translator->trans('command.generate.option_name', [], 'SymkitSitemapBundle'),
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $io->title('Generating sitemaps');
+        $io->title($this->translator->trans('command.generate.title', [], 'SymkitSitemapBundle'));
 
         /** @var string|null $loaderName */
         $loaderName = $input->getOption('name');
 
         $this->provider->provide();
-        $io->text('Generated sitemap index');
+        $io->text($this->translator->trans('command.generate.index_generated', [], 'SymkitSitemapBundle'));
 
         $loaders = null !== $loaderName
             ? [$loaderName => $this->registry->getLoader($loaderName)]
@@ -53,11 +60,16 @@ final class SitemapGenerateCommand extends Command
 
             for ($page = 1; $page <= $chunks; ++$page) {
                 $this->provider->provide($name, $page);
-                $io->text(\sprintf('  Generated %s (page %d/%d, %d URLs)', $name, $page, $chunks, $totalItems));
+                $io->text($this->translator->trans('command.generate.page_generated', [
+                    '%name%' => $name,
+                    '%page%' => $page,
+                    '%chunks%' => $chunks,
+                    '%count%' => $totalItems,
+                ], 'SymkitSitemapBundle'));
             }
         }
 
-        $io->success('All sitemaps generated successfully.');
+        $io->success($this->translator->trans('command.generate.success', [], 'SymkitSitemapBundle'));
 
         return Command::SUCCESS;
     }

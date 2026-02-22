@@ -254,9 +254,6 @@ php bin/console sitemap:debug
 # Install dependencies
 make install
 
-# Install git hooks (strips Co-authored-by from commits)
-make install-hooks
-
 # Run full quality pipeline
 make quality
 ```
